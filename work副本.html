@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<style type="text/css">
+			#d1{
+				width: 200px;
+				height: 200px;
+				background: red;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="d1"></div>
+		<img src="img/myrank_bg.jpg" id="pic"/>
+		<script src="js/touch-0.2.14.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			//拖拽效果
+			var target = document.getElementById("d1");
+			touch.on(target,"touchstart",function(ev){
+				//阻止默认行为 避免移动端页面会伴随滚动
+				ev.preventDefault();
+			})
+			
+			var dx = 0;
+			var dy = 0;
+			//当拖拽时 获取本次拖拽的位置改变,
+			touch.on(target,"drag",function(ev){
+				//事件对象的属性 x y
+				console.log(ev.x,ev.y);
+				//位置偏移量
+				var offsetx = dx + ev.x;
+				var offsety = dy + ev.y;
+				//修改元素的位置
+				this.style.webkitTransform = "translate("+ offsetx +"px,"+ offsety +"px)";
+			});
+			//当拖拽结束时
+			touch.on(target,"dragend",function(ev){
+				dx += ev.x;
+				dy += ev.y;
+			});
+		</script>
+		
+		<script type="text/javascript">
+			touch.on("#pic","touchstart",function(ev){
+				ec.preventDefault();
+			});
+			//存储初始缩放比
+			var initialScale = 1;
+			//记录当前操作的缩放比
+			var currentScale = 0;
+			touch.on("#pic","pinch",function(ev){
+				//事件对象的属性: scale 获取缩放比例
+				//获取当前次操作的缩放比的改变量
+				currentScale = ev.scale - 1;
+				//当前缩放的比例值应该是上一次缩放比 + 改变量
+				currentScale = initialScale + currentScale;
+				
+				//设置阈值 最大最小缩放值
+				currentScale = currentScale < 0.5 ? 0.5 : currentScale;
+				currentScale = currentScale > 3 ? 3 : currentScale;
+				//修改元素的transform属性
+				this.style.webkitTransform = "scale("+ currentScale +")";
+			});
+			
+			//当缩放结束时
+			touch.on("#pic","pinchend",function(ev){
+				//当前操作的缩放比例,会是下一次缩放操作的初始比例
+				initialScale = currentScale;
+			});
+		</script>
+	</body>
+</html>
